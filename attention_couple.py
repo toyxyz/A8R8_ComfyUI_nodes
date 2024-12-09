@@ -152,10 +152,6 @@ class AttentionCouple:
                 ),
                 "width": ("INT", {"default": 1024, "min": 8, "step": 8}),
                 "height": ("INT", {"default": 1024, "min": 8, "step": 8}),
-                "ip_adapter_active": (
-                    "BOOLEAN",
-                    {"default": False, "tooltip": "Set to true if using IPA."},
-                ),
             },
         }
 
@@ -173,27 +169,21 @@ class AttentionCouple:
         height,
         width,
         regions,
-        ip_adapter_active,
         **kwargs,
     ):
         base_mask = torch.zeros((height, width)).unsqueeze(0)
         global_mask = (torch.ones((height, width)) * global_prompt_weight).unsqueeze(0)
-        ip_even_mask = (torch.ones((height, width)) * 0.1).unsqueeze(0)
 
         new_model = model.clone()
 
         if not isinstance(regions, list):
             regions = [regions]
 
-        num_conds = (
-            len(regions) + 1 + (1 if ip_adapter_active and len(regions) % 2 == 0 else 0)
-        )
+        num_conds = len(regions) + 1
 
         mask = [base_mask] + [
             global_mask
             if i == 0
-            else ip_even_mask
-            if ip_adapter_active and len(regions) % 2 == 0 and i == num_conds - 1
             else F.interpolate(
                 regions[i - 1]["mask"].unsqueeze(0),
                 size=(height, width),
@@ -207,10 +197,7 @@ class AttentionCouple:
         self.mask = mask / mask.sum(dim=0, keepdim=True)
 
         self.conds = [
-            base_prompt[0][0]
-            if i == 0
-            or (ip_adapter_active and len(regions) % 2 == 0 and i == num_conds - 1)
-            else regions[i - 1]["cond"][0][0]
+            base_prompt[0][0] if i == 0 else regions[i - 1]["cond"][0][0]
             for i in range(0, num_conds)
         ]
         num_tokens = [cond.shape[1] for cond in self.conds]
@@ -252,6 +239,13 @@ class AttentionCouple:
 
             qs = torch.cat(qs, dim=0)
             ks = torch.cat(ks, dim=0).to(k)
+
+            if qs.size(0) % 2 == 1:
+                empty = torch.zeros_like(qs[0]).unsqueeze(0)
+                qs = torch.cat((qs, empty), dim=0)
+
+                empty2 = torch.zeros_like(ks[0]).unsqueeze(0)
+                ks = torch.cat((ks, empty2), dim=0)
 
             return qs, ks, ks
 
