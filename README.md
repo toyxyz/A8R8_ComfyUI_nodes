@@ -2,7 +2,7 @@ Update
 
 2024/12/31 Changed the input number of the Attention Couple Regions node to be adjustable.
 
-![image](https://github.com/user-attachments/assets/e918e342-f36a-4aed-b690-bc6bd9608181)
+![image](https://github.com/user-attachments/assets/69d9b855-ad3d-404d-8b30-4ed66ca643ef)
 
 
 # A8R8 ComfyUI Nodes
