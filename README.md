@@ -1,3 +1,10 @@
+Update
+
+2024/12/31 Changed the input number of the Attention Couple Regions node to be adjustable.
+
+![image](https://github.com/user-attachments/assets/e918e342-f36a-4aed-b690-bc6bd9608181)
+
+
 # A8R8 ComfyUI Nodes
 
 [A8R8](https://github.com/ramyma/a8r8) supporting nodes to integrate with [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
