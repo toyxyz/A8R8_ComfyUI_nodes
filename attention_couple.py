@@ -68,7 +68,7 @@ class AttentionCoupleRegion:
                 "mask": ("MASK",),
                 "weight": (
                     "FLOAT",
-                    {"default": 1.0, "min": 0.01, "max": 1.0, "step": 0.01},
+                    {"default": 1.0, "min": 0.01, "max": 100.0, "step": 0.01},
                 ),
             },
         }
@@ -137,7 +137,7 @@ class AttentionCouple:
                     {
                         "default": 0.3,
                         "min": 0.01,
-                        "max": 1.0,
+                        "max": 100.0,
                         "step": 0.1,
                         "tooltip": "Base prompt strength.",
                     },
